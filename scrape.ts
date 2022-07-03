@@ -1,7 +1,7 @@
 #!/usr/local/bin/node
 
 // install: npm i
-// usage: tsc scrape.ts && node scrape.js +CountryCodePhoneNumber | tee scrape-output.org
+// usage: tsc scrape.ts && node scrape.js +CountryCodePhoneNumber `which aws` | tee scrape-output.org
 
 // alerts go out via AWS CLI to SNS. you will need to have aws sns set up already and the above number should be in your sandbox.
 // you should also set up bitly links for the urls you want to monitor.
@@ -12,6 +12,7 @@ const puppeteer = require ('puppeteer');
 const { exec }  = require ('child_process');
 
 let phonenumber = process.argv[2];
+let awscli      = process.argv[3];
 
 const urls = [ [ "https://sg.store.ui.com/collections/unifi-protect/products/unifi-protect-g4-dome-camera", "https://bit.ly/3R6ydwM" ],
                [ "https://sg.store.ui.com/collections/unifi-protect/products/unifi-video-camera-g3-dome",   "https://bit.ly/3NBpOyd" ],
@@ -21,8 +22,6 @@ const urls = [ [ "https://sg.store.ui.com/collections/unifi-protect/products/uni
 var sleepLoop = 20; // seconds
 var alertCount = 0;
 const maxAlerts = 3;
-
-const awscli = "/Users/mengwong/.nix-profile/bin/aws"; // set to full path if you need to
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
