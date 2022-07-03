@@ -19,7 +19,7 @@ const urls = [ [ "https://sg.store.ui.com/collections/unifi-protect/products/uni
 //               [ "https://sg.store.ui.com/collections/unifi-protect/products/uvc-g4-doorbell",              "https://bit.ly/3I8mfyB" ]
                ]
 
-var sleepLoop = 20; // seconds
+var sleepLoop = 170; // seconds
 var alertCount = 0;
 const maxAlerts = 3;
 
@@ -39,7 +39,7 @@ function delay(ms: number) {
       let url   = urls[n][0];
       let bitly = urls[n][1];
       const bname = path.basename(url);
-      console.log("** loading " + url);
+      console.log("** loading " + bname);
       const page = pagecache[url] = pagecache[url] || await browser.newPage();
       await page.goto(url);
       // await page.setViewport({ width: 1920, height: 3080, }); await page.screenshot({path: bname + '.png'});
@@ -65,7 +65,7 @@ function delay(ms: number) {
           }
           
           console.log("sending alert.");
-          exec(`${awscli} sns publish --phone-number '${phonenumber}' --message '${bname} ${bitly} is buyable ${now}'`,
+          exec(`${awscli} sns publish --phone-number '${phonenumber}' --message '${bitly} ${bname} is buyable ${now}'`,
                (error, stdout, stderr) => {
                  if (error) {
                    console.log(`error: ${error.message}`);
@@ -79,8 +79,6 @@ function delay(ms: number) {
                });
         }
       }
-      console.log("done " + url);
-      console.log("** sleeping 5 seconds between any url fetch");
       await delay(5 * 1000);
     }
     console.log("** sleeping " + sleepLoop + " seconds");
